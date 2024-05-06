@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { EntityService } from '../entity.service';
 import { Link, Prisma, PrismaService } from '@reduced.to/prisma';
+import { AppConfigService } from '@reduced.to/config';
 
 @Injectable()
 export class LinksService extends EntityService<Link> {
-  constructor(prismaService: PrismaService) {
-    super(prismaService);
+  constructor(configService: AppConfigService, prismaService: PrismaService) {
+    super(configService, prismaService);
   }
 
   get model(): string {
@@ -30,6 +31,12 @@ export class LinksService extends EntityService<Link> {
       url: true,
       key: true,
     };
+  }
+
+  totalLinks(opts: Prisma.LinkWhereInput): Promise<number> {
+    return this.prismaService.link.count({
+      where: opts
+    });
   }
 
   findBy(opts: Prisma.LinkWhereInput): Promise<Link> {

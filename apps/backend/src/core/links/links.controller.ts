@@ -16,7 +16,7 @@ import { AppCacheService } from '../../cache/cache.service';
   version: '1',
 })
 export class LinksController {
-  constructor(private readonly linksService: LinksService, private readonly cacheService: AppCacheService) {}
+  constructor(private readonly linksService: LinksService, private readonly cacheService: AppCacheService) { }
 
   @Get()
   @Roles(Role.ADMIN, Role.USER)

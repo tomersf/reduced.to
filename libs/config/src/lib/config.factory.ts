@@ -8,7 +8,7 @@ export const configFactory: ConfigFactory<{ config: Configuration }> = () => {
         backendPort: +process.env.BACKEND_APP_PORT || 3000,
         frontendPort: +process.env.FRONTEND_APP_PORT || 5173,
         trackerPort: +process.env.TRACKER_APP_PORT || 3001,
-        activeUrlLimitCounter: +process.env.ACTIVE_URL_LIMIT_COUNTER || 10,
+        urlLimitCounter: +process.env.ACTIVE_URL_LIMIT_COUNTER || 10,
         env: process.env.NODE_ENV || 'development',
       },
       logger: {
@@ -77,6 +77,7 @@ export interface GeneralConfig {
   backendPort: number;
   frontendPort: number;
   trackerPort: number;
+  urlLimitCounter: number;
   env: string;
 }
 

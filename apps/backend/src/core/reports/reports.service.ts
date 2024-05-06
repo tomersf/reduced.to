@@ -6,7 +6,7 @@ import { AppConfigService } from '@reduced.to/config';
 @Injectable()
 export class ReportsService extends EntityService<Report> {
   constructor(private readonly config: AppConfigService, prismaService: PrismaService) {
-    super(prismaService);
+    super(config, prismaService);
   }
 
   get model(): string {

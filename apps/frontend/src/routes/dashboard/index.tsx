@@ -22,6 +22,7 @@ export default component$(() => {
   const total = useSignal(0);
   const filter = useSignal('');
   const refetch = useSignal(0);
+  const urlLimitCounter = useSignal<number | null>();
   const qrLink = useSignal<string | null>(null);
 
   const isLoadingData = useSignal(true);
@@ -64,6 +65,7 @@ export default component$(() => {
         filter: filter.value,
       });
 
+      urlLimitCounter.value = data.remainingUrlsCount;
       isLoadingData.value = false;
 
       if ((filter.value && page.value === 1) || refetch.value) {
@@ -153,6 +155,10 @@ export default component$(() => {
             Create a new link
           </button>
         </div>
+      </div>
+      <div class="flex items-center text-center gap-2">
+        <span class="font-semibold text-sm md:text-lg lg:text-xl">Remaining Links</span>
+        <span class={`badge ${urlLimitCounter.value === 0 ? 'badge-error' : 'badge-primary'}`}>{urlLimitCounter.value}</span>
       </div>
       <div ref={linksContainerRef} class="links overflow-y-auto h-screen p-5" style={{ maxHeight: 'calc(100vh - 160px)' }}>
         {!linksArray.length && isLoadingData.value ? ( // Only if it's the first load (links are empty)

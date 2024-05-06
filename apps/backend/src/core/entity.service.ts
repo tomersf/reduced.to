@@ -2,9 +2,10 @@ import { PrismaService } from '@reduced.to/prisma';
 import { IPaginationOptions, IPaginationResult, orderByBuilder } from '../shared/utils';
 import { SortOrder } from '../shared/enums/sort-order.enum';
 import { filterBuilder } from '../shared/utils';
+import { AppConfigService } from '@reduced.to/config';
 
 export abstract class EntityService<Entity> {
-  constructor(readonly prismaService: PrismaService) {}
+  constructor(readonly configService: AppConfigService, readonly prismaService: PrismaService) { }
 
   abstract get model(): string;
   abstract get filterFields(): Record<keyof any, any>;
@@ -12,6 +13,7 @@ export abstract class EntityService<Entity> {
 
   findAll = async (options: IFindAllOptions): Promise<IPaginationResult<Entity>> => {
     const { skip, limit, filter, sort, extraWhereClause } = options;
+
 
     const FILTER_CLAUSE = {};
     const ORDER_BY_CLAUSE = orderByBuilder<Partial<Entity>>(sort as any);
@@ -48,6 +50,7 @@ export abstract class EntityService<Entity> {
     return {
       total,
       data,
+      remainingUrlsCount: Math.max(this.configService.getConfig().general.urlLimitCounter - total, 0)
     };
   };
 }

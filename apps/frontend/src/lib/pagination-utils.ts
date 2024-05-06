@@ -12,6 +12,7 @@ export interface PaginationParams {
 export interface PaginationResult {
   data: any[];
   total: number;
+  remainingUrlsCount: number
 }
 
 export const fetchWithPagination = async ({ url, page, limit, sort, filter }: PaginationParams) => {
@@ -23,6 +24,7 @@ export const fetchWithPagination = async ({ url, page, limit, sort, filter }: Pa
 
     data.total = 0;
     data.data = [];
+    data.remainingUrlsCount = 0;
   }
 
   return data;

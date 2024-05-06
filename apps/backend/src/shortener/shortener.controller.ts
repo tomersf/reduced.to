@@ -12,6 +12,7 @@ import { AppConfigService } from '@reduced.to/config';
 import { Link } from '@prisma/client';
 import { addUtmParams } from '@reduced.to/utils';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { LinksService } from '../core/links/links.service';
 
 interface LinkResponse extends Partial<Link> {
   url: string;
@@ -24,12 +25,13 @@ interface LinkResponse extends Partial<Link> {
 })
 export class ShortenerController {
   constructor(
+    private readonly linksService: LinksService,
     private readonly configService: AppConfigService,
     private readonly logger: AppLoggerService,
     private readonly shortenerService: ShortenerService,
     private readonly shortenerProducer: ShortenerProducer,
     private readonly safeUrlService: SafeUrlService
-  ) {}
+  ) { }
 
   @UseGuards(JwtAuthGuard)
   @Get('random')
@@ -73,6 +75,12 @@ export class ShortenerController {
   @Post()
   async shortener(@Body() shortenerDto: ShortenerDto, @Req() req: Request): Promise<{ key: string }> {
     const user = req.user as UserContext;
+
+    // Check if user is not over the url limit
+    const totalUserUrlLinks = await this.linksService.totalLinks({ userId: user.id })
+    if (totalUserUrlLinks >= this.configService.getConfig().general.urlLimitCounter) {
+      throw new BadRequestException('You have reached the maximum number of links!');
+    }
 
     // Check if the url is safe
     if (this.configService.getConfig().safeUrl.enable) {
